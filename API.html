@@ -22,6 +22,17 @@
         <h2>Случайное изображение собаки</h2>
         <div id="dogImage"></div>
     </div>
+    <div>
+        <h2>Информация о случайном пользователе</h2>
+        <div id="userInfo"></div>
+    </div>
+    <div>
+        <h2>Список университетов в стране</h2>
+        <label for="countryInput">Введите название страны:</label>
+        <input type="text" id="countryInput" name="countryInput">
+        <button onclick="getUniversityList()">Показать список университетов</button>
+        <div id="universityList"></div>
+    </div>
 
     <script>
         // Функция для получения случайного факта о кошках
@@ -46,9 +57,37 @@
             document.getElementById('dogImage').innerHTML = `<img src="${data.message}" alt="Случайное изображение собаки">`;
         }
 
+        // Функция для получения информации о случайном пользователе
+        async function getUserInfo() {
+            const response = await fetch('https://randomuser.me/api/');
+            const data = await response.json();
+            const user = data.results[0];
+            const userInfo = `
+                <p><strong>Имя:</strong> ${user.name.first} ${user.name.last}</p>
+                <p><strong>Пол:</strong> ${user.gender}</p>
+                <p><strong>Электронная почта:</strong> ${user.email}</p>
+                <p><strong>Адрес:</strong> ${user.location.street.number} ${user.location.street.name}, ${user.location.city}, ${user.location.country}</p>
+            `;
+            document.getElementById('userInfo').innerHTML = userInfo;
+        }
+
+        // Функция для получения списка университетов в указанной стране
+        async function getUniversityList() {
+    const country = document.getElementById('countryInput').value;
+    const response = await fetch(`http://universities.hipolabs.com/search?country=${country}`);
+    const data = await response.json();
+    let universityList = '<ul>';
+    data.forEach(uni => {
+        universityList += `<li>${uni.name}</li>`;
+    });
+    universityList += '</ul>';
+    document.getElementById('universityList').innerHTML = universityList;
+}
+
         // Вызов функций
         getCatFact();
         getDogImage();
+        getUserInfo();
     </script>
 </body>
 </html>
